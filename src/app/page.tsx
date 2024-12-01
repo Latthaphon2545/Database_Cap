@@ -1,10 +1,13 @@
-import React from 'react';
-import Link from 'next/link';
+'use client'
+
+import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
 
 export default function Home() {
-  return (
-    <div>
-      
-    </div>
-  );
+  const router = useRouter()
+  useEffect(() => {
+    router.push('/members')
+  }, [])
+
+  return <div></div>
 }

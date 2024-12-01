@@ -4,6 +4,7 @@ import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { uploadImage } from '@/app/lib/cloundinsry'
 import Swal from 'sweetalert2'
@@ -11,6 +12,7 @@ import Swal from 'sweetalert2'
 import LiatCountry from '@/app/master/lisyCountry.json'
 
 export default function page() {
+  const router = useRouter()
   const [file, setFile] = useState(null) // To store the file
   const [preview, setPreview] = useState(null) // To store the preview URL
   const [firstName, setFirstName] = useState('')
@@ -39,8 +41,6 @@ export default function page() {
         title: 'Missing required fields',
         icon: 'error',
       })
-      console.log(gender)
-      console.log(country)
       return
     }
     setLoading(true)
@@ -65,7 +65,7 @@ export default function page() {
           title: 'Athlete created successfully',
           icon: 'success',
         })
-        window.location.href = '/members'
+        router.push('/members')
       }
     } catch (e) {
       console.error('Error adding document:', e)
@@ -244,7 +244,12 @@ export default function page() {
             type='submit'
           >
             {loading ? (
-              <span className='loading loading-dots loading-lg'></span>
+              <>
+                <span className='loading loading-dots loading-lg'></span>
+                <span>
+                  Please wait while we create the athlete. This may take a few
+                </span>
+              </>
             ) : (
               'Create Athlete'
             )}

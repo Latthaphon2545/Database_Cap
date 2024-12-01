@@ -5,8 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
-import LiatCountry from '@/app/master/lisyCountry.json'
-
 export default function Page() {
   const [members, setMembers] = useState<any[]>([]) // To store members data
   const [loading, setLoading] = useState(true) // To show loading state
