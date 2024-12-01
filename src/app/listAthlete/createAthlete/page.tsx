@@ -234,7 +234,7 @@ export default function page() {
         </div>
 
         <div className='flex justify-end gap-5'>
-          <Link className='btn btn-secondary btn-outline' href='/members'>
+          <Link className='btn btn-secondary btn-outline' href='/listAthlete'>
             Back
           </Link>
           <button
