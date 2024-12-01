@@ -4,7 +4,7 @@ export default function Navbar() {
   return (
     <div className="navbar bg-gray-800 ">
         <div className="flex-1">
-            <a className="btn btn-ghost text-xl text-white">Cap Eiei</a>
+            <a className="btn btn-ghost text-xl text-white">Paralympics_DB</a>
         </div>
         <div className="flex-none">
             <div className="dropdown dropdown-end">

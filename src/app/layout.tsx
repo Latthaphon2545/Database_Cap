@@ -35,7 +35,7 @@ export default function RootLayout({
           <div className="w-1/6 mt-5">
             <SideBar />
           </div>
-          <div className="w-5/6 m-5 p-5 outline outline-gray-300 h-[85vh] ">
+          <div className="w-5/6 m-5 p-5 outline outline-gray-300 h-[100vh] ">
             {children}
           </div>
         </div>
