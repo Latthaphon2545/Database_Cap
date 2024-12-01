@@ -31,7 +31,7 @@ export default function Page() {
         <Link
           className='btn btn-primary btn-outline'
           onClick={fetchMembers}
-          href='/members/addAthlete'
+          href='/listAthlete/createAthlete'
         >
           Add Athlete
         </Link>

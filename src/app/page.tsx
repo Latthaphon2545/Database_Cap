@@ -6,7 +6,7 @@ import React, { useEffect } from 'react'
 export default function Home() {
   const router = useRouter()
   useEffect(() => {
-    router.push('/members')
+    router.push('/listAthlete')
   }, [])
 
   return <div></div>

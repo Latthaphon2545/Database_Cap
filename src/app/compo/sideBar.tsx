@@ -9,7 +9,7 @@ const menu = [
   {
     name: 'Table of Athletes',
     icon: <CiBoxList />,
-    link: '/members',
+    link: '/listAthlete',
   },
 ]
 
