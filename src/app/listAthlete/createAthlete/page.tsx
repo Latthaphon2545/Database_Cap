@@ -65,7 +65,7 @@ export default function page() {
           title: 'Athlete created successfully',
           icon: 'success',
         })
-        router.push('/members')
+        router.push('/listAthlete')
       }
     } catch (e) {
       console.error('Error adding document:', e)

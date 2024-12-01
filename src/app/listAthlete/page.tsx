@@ -12,11 +12,11 @@ export default function Page() {
   const fetchMembers = async () => {
     try {
       const res = await axios.get('/api/getMember')
-      setMembers(res.data) // Assuming res.data is an array of members
+      setMembers(res.data)
     } catch (err) {
       console.error(err)
     } finally {
-      setLoading(false) // Stop loading spinner
+      setLoading(false)
     }
   }
 
