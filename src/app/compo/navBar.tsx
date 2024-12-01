@@ -2,11 +2,11 @@ import React from 'react'
 
 export default function Navbar() {
   return (
-    <div className="navbar bg-gray-800 ">
-        <div className="flex-1">
-            <a className="btn btn-ghost text-xl text-white">Paralympics_DB</a>
-        </div>
-        <div className="flex-none">
+    <div className='navbar bg-gray-800 '>
+      <div className='flex-1'>
+        <a className='btn btn-ghost text-xl text-white'>Paralympics_DB</a>
+      </div>
+      {/* <div className="flex-none">
             <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                 <div className="w-10 rounded-full">
@@ -21,13 +21,12 @@ export default function Navbar() {
                 <li>
                 <a className="justify-between">
                     Profile
-                    {/* <span className="badge">New</span> */}
                 </a>
                 </li>
                 <li><a>Logout</a></li>
             </ul>
             </div>
-        </div>
+        </div> */}
     </div>
   )
 }
