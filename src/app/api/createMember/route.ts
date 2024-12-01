@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       classification,
       dateOfBirth,
       email,
+      file,
     } = await req.json()
 
     if (
@@ -45,6 +46,7 @@ export async function POST(req: NextRequest) {
       classification,
       dateOfBirth,
       email,
+      imgProfile: file ?? null,
     })
 
     return NextResponse.json({ success: true }, { status: 200 })

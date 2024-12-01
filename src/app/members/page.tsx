@@ -1,8 +1,11 @@
 'use client'
 
 import axios from 'axios'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+
+import LiatCountry from '@/app/master/lisyCountry.json'
 
 export default function Page() {
   const [members, setMembers] = useState<any[]>([]) // To store members data
@@ -32,7 +35,7 @@ export default function Page() {
           onClick={fetchMembers}
           href='/members/addAthlete'
         >
-          + Athlete
+          Add Athlete
         </Link>
       </div>
 
@@ -58,13 +61,23 @@ export default function Page() {
               {members.map((member, index) => (
                 <tr key={index} className='hover:bg-gray-100'>
                   <td className='flex items-center gap-3'>
-                    <div className='avatar placeholder'>
-                      <div className='bg-neutral text-neutral-content w-8 rounded-full'>
-                        <span className='text-xl'>
-                          {member.firstName.charAt(0)}
-                        </span>
+                    {member.imgProfile ? (
+                      <Image
+                        src={member.imgProfile}
+                        alt={member.firstName}
+                        className='w-8 h-8 rounded-full'
+                        width={32}
+                        height={32}
+                      />
+                    ) : (
+                      <div className='avatar placeholder'>
+                        <div className='bg-neutral text-neutral-content w-8 rounded-full'>
+                          <span className='text-xl'>
+                            {member.firstName.charAt(0)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    )}
                     {member.firstName + ' ' + member.lastName}
                   </td>
                   <td className='text-center'>{member.id}</td>

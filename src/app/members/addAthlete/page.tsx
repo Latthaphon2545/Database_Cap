@@ -1,16 +1,23 @@
 'use client'
 
 import axios from 'axios'
+import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 
+import { uploadImage } from '@/app/lib/cloundinsry'
+import Swal from 'sweetalert2'
+
+import LiatCountry from '@/app/master/lisyCountry.json'
+
 export default function page() {
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState(null) // To store the file
+  const [preview, setPreview] = useState(null) // To store the preview URL
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [id, setId] = useState('')
-  const [gender, setGender] = useState('')
-  const [country, setCountry] = useState('')
+  const [gender, setGender] = useState('Male')
+  const [country, setCountry] = useState(LiatCountry[0].name)
   const [classification, setClassification] = useState('')
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [email, setEmail] = useState('')
@@ -28,11 +35,20 @@ export default function page() {
       !classification ||
       !dateOfBirth
     ) {
-      alert('Please fill all fields')
+      Swal.fire({
+        title: 'Missing required fields',
+        icon: 'error',
+      })
+      console.log(gender)
+      console.log(country)
       return
     }
     setLoading(true)
     try {
+      let uploadImg = ''
+      if (file) {
+        uploadImg = await uploadImage(file, id)
+      }
       const res = await axios.post('/api/createMember', {
         firstName,
         lastName,
@@ -42,9 +58,13 @@ export default function page() {
         classification,
         dateOfBirth,
         email,
+        file: uploadImg,
       })
       if (res.data.success) {
-        alert('Athlete created successfully')
+        await Swal.fire({
+          title: 'Athlete created successfully',
+          icon: 'success',
+        })
         window.location.href = '/members'
       }
     } catch (e) {
@@ -55,24 +75,56 @@ export default function page() {
     }
   }
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files[0]
+
+    if (!selectedFile.size || selectedFile.size > 1000000) {
+      Swal.fire({
+        title: 'File size is too large',
+        text: 'Please upload a file less than 1MB',
+        icon: 'error',
+      })
+
+      return
+    }
+
+    if (selectedFile) {
+      setFile(selectedFile)
+      setPreview(URL.createObjectURL(selectedFile))
+    }
+  }
+
   return (
     <div className='m-10'>
-      <h1 className='text-3xl font-bold text-center'>Create New Athlete</h1>
+      <h1 className='text-xl font-bold text-center'>Create New Athlete</h1>
       <form className='mt-5 flex flex-col gap-4'>
         <div className='flex flex-col justify-center items-center gap-4'>
           <div className='avatar'>
-            <div className='w-24 rounded'>
-              <img src='https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' />
+            <div className='w-24 text-center'>
+              {preview ? (
+                <Image
+                  src={preview}
+                  alt='Uploaded Preview'
+                  width={100}
+                  height={100}
+                />
+              ) : (
+                <p>Plase upload a photo (Optional) (Max 1MB)</p>
+              )}
             </div>
           </div>
-          <input type='file' className='file-input w-full max-w-xs' />
+          <input
+            type='file'
+            className='file-input file-input-xs w-full max-w-xs'
+            onChange={handleFileChange}
+          />
         </div>
 
         <div>
           <div className='flex justify-around'>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>First Name</span>
+                <span className='label-text'>First Name*</span>
               </div>
               <input
                 type='text'
@@ -84,7 +136,7 @@ export default function page() {
             </label>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>Last Name</span>
+                <span className='label-text'>Last Name*</span>
               </div>
               <input
                 type='text'
@@ -99,7 +151,7 @@ export default function page() {
           <div className='flex justify-around'>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>ID</span>
+                <span className='label-text'>ID*</span>
               </div>
               <input
                 type='text'
@@ -110,32 +162,40 @@ export default function page() {
             </label>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>Gender</span>
+                <span className='label-text'>Gender*</span>
               </div>
-              <input
-                type='text'
-                className='input input-bordered w-full max-w-xs'
+              <select
+                className='select select-bordered w-full max-w-xs'
                 onChange={(e) => setGender(e.target.value)}
-                value={gender}
-              />
+              >
+                <option value='Male'>Male</option>
+                <option value='Female'>Female</option>
+                <option value='Not Prefer'>Not Prefer</option>
+              </select>
             </label>
           </div>
 
           <div className='flex justify-around'>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>Country</span>
+                <span className='label-text'>Country*</span>
               </div>
-              <input
-                type='text'
-                className='input input-bordered w-full max-w-xs'
-                onChange={(e) => setCountry(e.target.value)}
-                value={country}
-              />
+              {LiatCountry && (
+                <select
+                  className='select select-bordered w-full max-w-xs'
+                  onChange={(e) => setCountry(e.target.value)}
+                >
+                  {LiatCountry.map((country) => (
+                    <option key={country.code} value={country.name}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </label>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>Classification</span>
+                <span className='label-text'>Classification*</span>
               </div>
               <input
                 type='text'
@@ -149,7 +209,7 @@ export default function page() {
           <div className='flex justify-around'>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>Date of Birth</span>
+                <span className='label-text'>Date of Birth*</span>
               </div>
               <input
                 type='date'
@@ -160,7 +220,7 @@ export default function page() {
             </label>
             <label className='form-control w-full max-w-xs'>
               <div className='label'>
-                <span className='label-text'>E-mail</span>
+                <span className='label-text'>E-mail*</span>
               </div>
               <input
                 type='email'
