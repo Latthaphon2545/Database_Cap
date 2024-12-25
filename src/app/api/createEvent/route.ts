@@ -38,18 +38,11 @@ export async function POST(req: NextRequest) {
     const collection = db.collection('events')
 
     // conver date and time to ISO string
-    // const dateISO = new Date(date).toISOString()
-    // const timeISO = new Date(time).toISOString()
-
-    // combine date and time
-    // const dateISOString = dateISO.split('T')[0]
-    // const timeISOString = timeISO.split('T')[1].split('.')[0]
-    // const dateTime = `${dateISOString}T${timeISOString}`
-    // const date = new Date(dateTime)
+    const dateTimeString = `${date}T${time}:00`
+    const dateTimeISO = new Date(dateTimeString).toISOString()
 
     await collection.insertOne({
-      date,
-      time,
+      date: dateTimeISO,
       id,
       gender,
       name,

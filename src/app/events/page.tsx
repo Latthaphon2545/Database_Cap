@@ -151,13 +151,22 @@ export default function Page() {
             </thead>
             <tbody>
               {events.map((event, index) => {
+                const dateMap = new Date(event.date).toLocaleDateString()
+                const timeMap = new Date(event.date).toLocaleTimeString(
+                  'en-US',
+                  {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }
+                )
+
                 return (
                   <tr key={index} className='hover:bg-gray-100'>
                     <td>
                       <div className='flex items-center gap-3'>
                         <div>
-                          <div className='font-bold'>{event.date}</div>
-                          <div className='text-sm opacity-50'>{event.time}</div>
+                          <div className='font-bold'>{dateMap}</div>
+                          <div className='text-sm opacity-50'>{timeMap}</div>
                         </div>
                       </div>
                     </td>
