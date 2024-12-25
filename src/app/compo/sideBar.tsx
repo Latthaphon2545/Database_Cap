@@ -4,12 +4,18 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation' // Hook to get the current path
 import React from 'react'
 import { CiBoxList } from 'react-icons/ci'
+import { MdEvent } from 'react-icons/md'
 
 const menu = [
   {
     name: 'Table of Athletes',
     icon: <CiBoxList />,
     link: '/listAthlete',
+  },
+  {
+    name: 'Events',
+    icon: <MdEvent />,
+    link: '/events',
   },
 ]
 

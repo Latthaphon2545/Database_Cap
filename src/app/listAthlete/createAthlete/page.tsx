@@ -246,9 +246,6 @@ export default function page() {
             {loading ? (
               <>
                 <span className='loading loading-dots loading-lg'></span>
-                <span>
-                  Please wait while we create the athlete. This may take a few
-                </span>
               </>
             ) : (
               'Create Athlete'
