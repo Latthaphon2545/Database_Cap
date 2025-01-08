@@ -153,13 +153,12 @@ export default function Page() {
               {events.map((event, index) => {
                 const dateMap = new Date(event.date).toLocaleDateString()
                 const timeMap = new Date(event.date).toLocaleTimeString(
-                  'en-US',
+                  'th-TH',
                   {
                     hour: '2-digit',
                     minute: '2-digit',
                   }
                 )
-
                 return (
                   <tr key={index} className='hover:bg-gray-100'>
                     <td>
@@ -187,8 +186,16 @@ export default function Page() {
                         onClick={() => {
                           document.getElementById('edit_event').showModal()
                           set_id(event._id)
-                          setDate(event.date || '')
-                          setTime(event.time || '')
+                          setDate(
+                            new Date(event.date).toISOString().split('T')[0]
+                          ) // YYYY-MM-DD format
+                          setTime(
+                            new Date(event.date).toLocaleTimeString('th-TH', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              hour12: false,
+                            })
+                          )
                           setID(event.id || '')
                           setName(event.name || '')
                           setGender(event.gender || '')
