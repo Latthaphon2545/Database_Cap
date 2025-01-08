@@ -3,7 +3,7 @@
 import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { uploadImage } from '@/app/lib/cloundinsry'

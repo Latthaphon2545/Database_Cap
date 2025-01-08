@@ -186,15 +186,22 @@ export default function Page() {
                         onClick={() => {
                           document.getElementById('edit_event').showModal()
                           set_id(event._id)
+
                           setDate(
-                            new Date(event.date).toISOString().split('T')[0]
+                            (event.date &&
+                              new Date(event.date)
+                                .toISOString()
+                                .split('T')[0]) ||
+                              ''
                           ) // YYYY-MM-DD format
                           setTime(
-                            new Date(event.date).toLocaleTimeString('th-TH', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              hour12: false,
-                            })
+                            (event.date &&
+                              new Date(event.date).toLocaleTimeString('th-TH', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                              })) ||
+                              ''
                           )
                           setID(event.id || '')
                           setName(event.name || '')
