@@ -39,11 +39,7 @@ export async function POST(req: NextRequest) {
 
     // conver date and time to ISO string
     const dateTimeString = `${date}T${time}:00`
-    const dateTimeISO = new Date(dateTimeString).toLocaleTimeString('th-TH', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })
+    const dateTimeISO = new Date(dateTimeString).toISOString()
 
     await collection.insertOne({
       date: dateTimeISO,
