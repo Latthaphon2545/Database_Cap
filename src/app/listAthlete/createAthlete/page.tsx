@@ -112,6 +112,7 @@ export default function page() {
       }
 
       try {
+        const athleteCreated = []
         let uploadImg = ''
         if (file) {
           uploadImg = await uploadImage(file, id)
@@ -319,7 +320,7 @@ export default function page() {
             </div>
           </div>
         ))}
-        <div className='flex justify-between'>
+        <div className='flex justify-end gap-5'>
           <button
             type='button'
             className='btn btn-secondary'
@@ -331,7 +332,7 @@ export default function page() {
             {loading ? (
               <span className='loading loading-dots loading-lg'></span>
             ) : (
-              'Create Athletes'
+              'Add Athletes'
             )}
           </button>
         </div>
