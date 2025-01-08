@@ -8,7 +8,7 @@ import { MdEvent } from 'react-icons/md'
 
 const menu = [
   {
-    name: 'Table of Athletes',
+    name: 'Athletes',
     icon: <CiBoxList />,
     link: '/listAthlete',
   },

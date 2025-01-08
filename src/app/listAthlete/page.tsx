@@ -4,6 +4,8 @@ import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
+import { MdDelete } from 'react-icons/md'
+import Swal from 'sweetalert2'
 
 export default function Page() {
   const [members, setMembers] = useState<any[]>([]) // To store members data
@@ -18,6 +20,35 @@ export default function Page() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleDelete = async (id: string) => {
+    await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will not be able to recover this athlete!',
+      icon: 'warning',
+      showCancelButton: true,
+      reverseButtons: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, keep it',
+      loaderHtml: '<span class="loading loading-lg"></span>',
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        try {
+          await axios.post('/api/deleteMember', { _id: id })
+        } catch (e) {
+          console.error('Error deleting document:', e)
+          Swal.fire({
+            title: 'Error deleting event',
+            text: 'Internal Server Error',
+            icon: 'error',
+          })
+        } finally {
+          await fetchMembers()
+        }
+      },
+      //
+    })
   }
 
   useEffect(() => {
@@ -53,6 +84,7 @@ export default function Page() {
                 <th className='text-center'>Classification</th>
                 <th className='text-center'>Date of Birth</th>
                 <th className='text-center'>E-mail</th>
+                <th className='text-center'>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -84,6 +116,14 @@ export default function Page() {
                   <td className='text-center'>{member.classification}</td>
                   <td className='text-center'>{member.dateOfBirth}</td>
                   <td className='text-center'>{member.email}</td>
+                  <td className='flex gap-2 justify-center'>
+                    <button
+                      className='btn btn-error btn-outline btn-sm'
+                      onClick={() => handleDelete(member._id)}
+                    >
+                      <MdDelete />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
