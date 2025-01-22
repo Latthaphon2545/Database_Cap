@@ -23,6 +23,7 @@ interface IModalUpdateAthletes {
   setFile: (value: File | null) => void
   loadingUpdate: boolean
   handleUpdate: () => void | Promise<void>
+  setIsUpdateProfile: (value: boolean) => void
 }
 
 export const ModalUpdateAthletes = ({
@@ -46,6 +47,7 @@ export const ModalUpdateAthletes = ({
   setFile,
   handleUpdate,
   loadingUpdate,
+  setIsUpdateProfile,
 }: IModalUpdateAthletes) => {
   const [sizeFile, setSizeFile] = React.useState('')
   const [preview, setPreview] = React.useState('')
@@ -182,14 +184,25 @@ export const ModalUpdateAthletes = ({
                   }
                   setFile(e.target.files[0])
                   setPreview(URL.createObjectURL(e.target.files[0]))
+                  setIsUpdateProfile(true)
                 }}
               />
               {sizeFile && <p className='text-red-500'>{sizeFile}</p>}
             </label>
-            {file && (
+            {preview && (
               <div className='w-full max-w-xs'>
                 <Image
-                  src={preview || file}
+                  src={preview}
+                  alt='Uploaded Preview'
+                  width={100}
+                  height={100}
+                />
+              </div>
+            )}
+            {!preview && file && (
+              <div className='w-full max-w-xs'>
+                <Image
+                  src={file}
                   alt='Uploaded Preview'
                   width={100}
                   height={100}

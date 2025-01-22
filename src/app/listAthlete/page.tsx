@@ -25,6 +25,7 @@ export default function Page() {
   const [dateOfBirth, setDateOfBirth] = useState('')
   const [email, setEmail] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [isUpdateProfile, setIsUpdateProfile] = useState(false)
   const [loadingUpdate, setLoadingUpdate] = useState(false)
 
   const fetchMembers = async () => {
@@ -72,7 +73,7 @@ export default function Page() {
     setLoadingUpdate(true)
     try {
       let uploadImg = ''
-      if (file) {
+      if (file && isUpdateProfile) {
         uploadImg = await uploadImage(file, id)
       }
       const res = await axios.post('/api/updateAthlete', {
@@ -237,6 +238,7 @@ export default function Page() {
         setFile={setFile}
         loadingUpdate={loadingUpdate}
         handleUpdate={handleUpdate}
+        setIsUpdateProfile={setIsUpdateProfile}
       />
     </div>
   )
