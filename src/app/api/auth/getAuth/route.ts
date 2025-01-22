@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
   try {
-    const client = await clientPromise
-
     // get cookies from the request
     const cookies = req.cookies
     const tokenCookie = cookies.get('token')
@@ -21,6 +19,7 @@ export async function GET(req: NextRequest) {
 
     const id = new ObjectId(token)
 
+    const client = await clientPromise
     const db = client.db('Athlests')
     const customers = await db.collection('admin').findOne({
       _id: id,

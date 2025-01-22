@@ -11,6 +11,7 @@ import StageJSON from '../master/stage.json'
 import StatusJSON from '../master/status.json'
 import { ModalUpdateEvent } from '../compo/modalUpdateEvent'
 import fetchAuth from '../lib/getAuth'
+import { useParams, usePathname, useSearchParams } from 'next/navigation'
 
 const stageMap = Object.fromEntries(
   StageJSON.map((stage) => [stage.name, stage.label])
@@ -37,9 +38,13 @@ export default function Page() {
   const [remark, setRemark] = useState('')
   const [loadingUpdate, setLoadingUpdate] = useState(false)
 
+  // get param from url http://localhost:3000/events?date=123 (123 is param)
+  const param = useSearchParams()
+
   const fetchEvent = async () => {
     try {
-      const res = await axios.get('/api/getEvent')
+      const date = param.get('date')
+      const res = await axios.get('/api/getEvent?date=' + date)
       setEvents(res.data)
     } catch (err) {
       console.error(err)
@@ -122,6 +127,10 @@ export default function Page() {
     fetchEvent()
   }, [])
 
+  useEffect(() => {
+    fetchEvent()
+  }, [param])
+
   return (
     <div>
       <div className='flex justify-between items-center'>
@@ -134,6 +143,46 @@ export default function Page() {
             Add Event
           </Link>
         )}
+      </div>
+
+      {/* Choose Date */}
+      <div className='flex items-center gap-3 mt-5'>
+        <button
+          className={`btn btn-primary btn-outline btn-xs ${
+            param.get('date') === '2024-01-18' ? 'btn-active' : ''
+          }`}
+          onClick={() => {
+            const newParams = new URLSearchParams(param.toString())
+            newParams.set('date', '2024-01-18')
+            window.history.replaceState(null, '', `?${newParams.toString()}`)
+          }}
+        >
+          1/18/2024
+        </button>
+        <button
+          className={`btn btn-primary btn-outline btn-xs ${
+            param.get('date') === '2024-01-19' ? 'btn-active' : ''
+          }`}
+          onClick={() => {
+            const newParams = new URLSearchParams(param.toString())
+            newParams.set('date', '2024-01-19')
+            window.history.replaceState(null, '', `?${newParams.toString()}`)
+          }}
+        >
+          1/19/2024
+        </button>
+        <button
+          className={`btn btn-primary btn-outline btn-xs ${
+            param.get('date') === '2024-01-20' ? 'btn-active' : ''
+          }`}
+          onClick={() => {
+            const newParams = new URLSearchParams(param.toString())
+            newParams.set('date', '2024-01-20')
+            window.history.replaceState(null, '', `?${newParams.toString()}`)
+          }}
+        >
+          1/20/2024
+        </button>
       </div>
 
       <div className='overflow-x-auto mt-5'>

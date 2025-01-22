@@ -15,7 +15,7 @@ const menu = [
   {
     name: 'Events',
     icon: <MdEvent />,
-    link: '/events',
+    link: '/events?date=2024-01-18',
   },
 ]
 
