@@ -2,14 +2,13 @@
 
 import axios from 'axios'
 import Image from 'next/image'
-import Link from 'next/link'
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { uploadImage } from '@/app/lib/cloundinsry'
 import Swal from 'sweetalert2'
 
-import LiatCountry from '@/app/master/lisyCountry.json'
+import ListCountry from '@/app/master/lisyCountry.json'
 
 export default function page() {
   const router = useRouter()
@@ -21,7 +20,7 @@ export default function page() {
       lastName: '',
       id: '',
       gender: 'Male',
-      country: LiatCountry[0].name,
+      country: ListCountry[0].name,
       classification: '',
       dateOfBirth: '',
       email: '',
@@ -39,7 +38,7 @@ export default function page() {
         lastName: '',
         id: '',
         gender: 'Male',
-        country: LiatCountry[0].name,
+        country: ListCountry[0].name,
         classification: '',
         dateOfBirth: '',
         email: '',
@@ -258,14 +257,14 @@ export default function page() {
                   <div className='label'>
                     <span className='label-text'>Country*</span>
                   </div>
-                  {LiatCountry && (
+                  {ListCountry && (
                     <select
                       className='select select-bordered w-full max-w-xs'
                       onChange={(e) =>
                         handleChange(index, 'country', e.target.value)
                       }
                     >
-                      {LiatCountry.map((country) => (
+                      {ListCountry.map((country) => (
                         <option key={country.code} value={country.name}>
                           {country.name}
                         </option>

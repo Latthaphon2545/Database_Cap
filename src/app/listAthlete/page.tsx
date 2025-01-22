@@ -4,12 +4,28 @@ import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { MdDelete } from 'react-icons/md'
+import { MdDelete, MdEdit } from 'react-icons/md'
 import Swal from 'sweetalert2'
+import fetchAuth from '../lib/getAuth'
+import { ModalUpdateAthletes } from '../compo/modalUpdateAthletes'
+import { uploadImage } from '../lib/cloundinsry'
 
 export default function Page() {
   const [members, setMembers] = useState<any[]>([]) // To store members data
   const [loading, setLoading] = useState(true) // To show loading state
+  const [auth, setAuth] = useState(false)
+
+  const [_id, set_id] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [id, setID] = useState('')
+  const [gender, setGender] = useState('')
+  const [country, setCountry] = useState('')
+  const [classification, setClassification] = useState('')
+  const [dateOfBirth, setDateOfBirth] = useState('')
+  const [email, setEmail] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [loadingUpdate, setLoadingUpdate] = useState(false)
 
   const fetchMembers = async () => {
     try {
@@ -51,7 +67,51 @@ export default function Page() {
     })
   }
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoadingUpdate(true)
+    try {
+      let uploadImg = ''
+      if (file) {
+        uploadImg = await uploadImage(file, id)
+      }
+      const res = await axios.post('/api/updateAthlete', {
+        _id,
+        firstName,
+        lastName,
+        id,
+        gender,
+        country,
+        classification,
+        dateOfBirth,
+        email,
+        file: uploadImg,
+      })
+      if (res.data.success) {
+        Swal.fire({
+          title: 'Event updated successfully',
+          icon: 'success',
+        })
+        fetchMembers()
+      }
+    } catch (e) {
+      console.error('Error updating document:', e)
+      Swal.fire({
+        title: 'Error updating event',
+        text: 'Internal Server Error',
+        icon: 'error',
+      })
+    } finally {
+      setLoadingUpdate(false)
+      setFile(null)
+      document.getElementById('edit_athletes').close()
+    }
+  }
+
   useEffect(() => {
+    fetchAuth().then((data) => {
+      setAuth(data)
+    })
     fetchMembers()
   }, [])
 
@@ -59,20 +119,22 @@ export default function Page() {
     <div>
       <div className='flex justify-between items-center'>
         <h1 className='text-2xl font-bold'>Table of Athletes</h1>
-        <Link
-          className='btn btn-primary btn-outline'
-          onClick={fetchMembers}
-          href='/listAthlete/createAthlete'
-        >
-          Add Athlete
-        </Link>
+        {auth && (
+          <Link
+            className='btn btn-primary btn-outline'
+            onClick={fetchMembers}
+            href='/listAthlete/createAthlete'
+          >
+            Add Athlete
+          </Link>
+        )}
       </div>
 
       <div className='overflow-x-auto mt-5'>
         {loading ? (
           <span className='loading loading-dots loading-lg'></span>
         ) : members.length === 0 ? (
-          <p>No members found.</p> // Handle empty data
+          <p>No members found.</p>
         ) : (
           <table className='table'>
             <thead>
@@ -84,7 +146,7 @@ export default function Page() {
                 <th className='text-center'>Classification</th>
                 <th className='text-center'>Date of Birth</th>
                 <th className='text-center'>E-mail</th>
-                <th className='text-center'>Actions</th>
+                {auth && <th className='text-center'>Actions</th>}
               </tr>
             </thead>
             <tbody>
@@ -114,22 +176,68 @@ export default function Page() {
                   <td className='text-center'>{member.gender}</td>
                   <td className='text-center'>{member.country}</td>
                   <td className='text-center'>{member.classification}</td>
-                  <td className='text-center'>{member.dateOfBirth}</td>
-                  <td className='text-center'>{member.email}</td>
-                  <td className='flex gap-2 justify-center'>
-                    <button
-                      className='btn btn-error btn-outline btn-sm'
-                      onClick={() => handleDelete(member._id)}
-                    >
-                      <MdDelete />
-                    </button>
+                  {/* format dd/MM/YYYY */}
+                  <td className='text-center'>
+                    {new Date(member.dateOfBirth).toLocaleDateString()}
                   </td>
+                  <td className='text-center'>{member.email}</td>
+                  {auth && (
+                    <td className='flex gap-2 justify-center'>
+                      <button
+                        className='btn btn-primary btn-sm'
+                        onClick={() => {
+                          document.getElementById('edit_athletes').showModal()
+                          set_id(member._id)
+                          setFirstName(member.firstName)
+                          setLastName(member.lastName)
+                          setID(member.id)
+                          setGender(member.gender)
+                          setCountry(member.country)
+                          setClassification(member.classification)
+                          setDateOfBirth(member.dateOfBirth)
+                          setEmail(member.email)
+                          setFile(member.imgProfile)
+                        }}
+                      >
+                        <MdEdit />
+                      </button>
+                      <button
+                        className='btn btn-error btn-outline btn-sm'
+                        onClick={() => handleDelete(member._id)}
+                      >
+                        <MdDelete />
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         )}
       </div>
+
+      <ModalUpdateAthletes
+        firstName={firstName}
+        lastName={lastName}
+        id={id}
+        gender={gender}
+        country={country}
+        classification={classification}
+        dateOfBirth={dateOfBirth}
+        email={email}
+        file={file}
+        setFirstName={setFirstName}
+        setLastName={setLastName}
+        setID={setID}
+        setGender={setGender}
+        setCountry={setCountry}
+        setClassification={setClassification}
+        setDateOfBirth={setDateOfBirth}
+        setEmail={setEmail}
+        setFile={setFile}
+        loadingUpdate={loadingUpdate}
+        handleUpdate={handleUpdate}
+      />
     </div>
   )
 }

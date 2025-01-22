@@ -10,6 +10,7 @@ import Swal from 'sweetalert2'
 import StageJSON from '../master/stage.json'
 import StatusJSON from '../master/status.json'
 import { ModalUpdateEvent } from '../compo/modalUpdateEvent'
+import fetchAuth from '../lib/getAuth'
 
 const stageMap = Object.fromEntries(
   StageJSON.map((stage) => [stage.name, stage.label])
@@ -22,6 +23,7 @@ const statusMap = Object.fromEntries(
 export default function Page() {
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [auth, setAuth] = useState(false)
 
   const [_id, set_id] = useState('')
   const [date, setDate] = useState('')
@@ -114,6 +116,9 @@ export default function Page() {
   }
 
   useEffect(() => {
+    fetchAuth().then((data) => {
+      setAuth(data)
+    })
     fetchEvent()
   }, [])
 
@@ -121,12 +126,14 @@ export default function Page() {
     <div>
       <div className='flex justify-between items-center'>
         <h1 className='text-2xl font-bold'>Event</h1>
-        <Link
-          className='btn btn-primary btn-outline'
-          href='/events/createEvent'
-        >
-          Add Event
-        </Link>
+        {auth && (
+          <Link
+            className='btn btn-primary btn-outline'
+            href='/events/createEvent'
+          >
+            Add Event
+          </Link>
+        )}
       </div>
 
       <div className='overflow-x-auto mt-5'>
@@ -146,7 +153,7 @@ export default function Page() {
                 <th className='text-center'>Stage</th>
                 <th className='text-center'>Status</th>
                 <th className='text-center'>Remark</th>
-                <th className='text-center'>Action</th>
+                {auth && <th className='text-center'>Action</th>}
               </tr>
             </thead>
             <tbody>
@@ -180,47 +187,52 @@ export default function Page() {
                       {statusMap[event.status] || event.status}
                     </td>
                     <td className='text-center'>{event.remark || '-'}</td>
-                    <td className='text-center flex justify-center content-center gap-2'>
-                      <button
-                        className='btn btn-primary btn-sm'
-                        onClick={() => {
-                          document.getElementById('edit_event').showModal()
-                          set_id(event._id)
+                    {auth && (
+                      <td className='text-center flex justify-center content-center gap-2'>
+                        <button
+                          className='btn btn-primary btn-sm'
+                          onClick={() => {
+                            document.getElementById('edit_event').showModal()
+                            set_id(event._id)
 
-                          setDate(
-                            (event.date &&
-                              new Date(event.date)
-                                .toISOString()
-                                .split('T')[0]) ||
-                              ''
-                          ) // YYYY-MM-DD format
-                          setTime(
-                            (event.date &&
-                              new Date(event.date).toLocaleTimeString('th-TH', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false,
-                              })) ||
-                              ''
-                          )
-                          setID(event.id || '')
-                          setName(event.name || '')
-                          setGender(event.gender || '')
-                          setClassification(event.classification || '')
-                          setStage(event.stage || '')
-                          setStatus(event.status || '')
-                          setRemark(event.remark || '')
-                        }}
-                      >
-                        <MdEdit />
-                      </button>
-                      <button
-                        className='btn btn-error btn-outline btn-sm'
-                        onClick={() => handleDelete(event._id)}
-                      >
-                        <MdDelete />
-                      </button>
-                    </td>
+                            setDate(
+                              (event.date &&
+                                new Date(event.date)
+                                  .toISOString()
+                                  .split('T')[0]) ||
+                                ''
+                            ) // YYYY-MM-DD format
+                            setTime(
+                              (event.date &&
+                                new Date(event.date).toLocaleTimeString(
+                                  'th-TH',
+                                  {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  }
+                                )) ||
+                                ''
+                            )
+                            setID(event.id || '')
+                            setName(event.name || '')
+                            setGender(event.gender || '')
+                            setClassification(event.classification || '')
+                            setStage(event.stage || '')
+                            setStatus(event.status || '')
+                            setRemark(event.remark || '')
+                          }}
+                        >
+                          <MdEdit />
+                        </button>
+                        <button
+                          className='btn btn-error btn-outline btn-sm'
+                          onClick={() => handleDelete(event._id)}
+                        >
+                          <MdDelete />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
