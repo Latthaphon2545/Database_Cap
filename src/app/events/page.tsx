@@ -202,7 +202,7 @@ export default function Page() {
                 <th className='text-center'>Stage</th>
                 <th className='text-center'>Status</th>
                 <th className='text-center'>Remark</th>
-                {auth && <th className='text-center'>Action</th>}
+                <th className='text-center'>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -236,52 +236,62 @@ export default function Page() {
                       {statusMap[event.status] || event.status}
                     </td>
                     <td className='text-center'>{event.remark || '-'}</td>
-                    {auth && (
-                      <td className='text-center flex justify-center content-center gap-2'>
-                        <button
-                          className='btn btn-primary btn-sm'
-                          onClick={() => {
-                            document.getElementById('edit_event').showModal()
-                            set_id(event._id)
+                    <td className='text-center flex justify-center content-center gap-2'>
+                      {auth && (
+                        <>
+                          <button
+                            className='btn btn-primary btn-sm'
+                            onClick={() => {
+                              document.getElementById('edit_event').showModal()
+                              set_id(event._id)
 
-                            setDate(
-                              (event.date &&
-                                new Date(event.date)
-                                  .toISOString()
-                                  .split('T')[0]) ||
-                                ''
-                            ) // YYYY-MM-DD format
-                            setTime(
-                              (event.date &&
-                                new Date(event.date).toLocaleTimeString(
-                                  'th-TH',
-                                  {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: false,
-                                  }
-                                )) ||
-                                ''
-                            )
-                            setID(event.id || '')
-                            setName(event.name || '')
-                            setGender(event.gender || '')
-                            setClassification(event.classification || '')
-                            setStage(event.stage || '')
-                            setStatus(event.status || '')
-                            setRemark(event.remark || '')
-                          }}
+                              setDate(
+                                (event.date &&
+                                  new Date(event.date)
+                                    .toISOString()
+                                    .split('T')[0]) ||
+                                  ''
+                              ) // YYYY-MM-DD format
+                              setTime(
+                                (event.date &&
+                                  new Date(event.date).toLocaleTimeString(
+                                    'th-TH',
+                                    {
+                                      hour: '2-digit',
+                                      minute: '2-digit',
+                                      hour12: false,
+                                    }
+                                  )) ||
+                                  ''
+                              )
+                              setID(event.id || '')
+                              setName(event.name || '')
+                              setGender(event.gender || '')
+                              setClassification(event.classification || '')
+                              setStage(event.stage || '')
+                              setStatus(event.status || '')
+                              setRemark(event.remark || '')
+                            }}
+                          >
+                            <MdEdit />
+                          </button>
+                          <button
+                            className='btn btn-error btn-outline btn-sm'
+                            onClick={() => handleDelete(event._id)}
+                          >
+                            <MdDelete />
+                          </button>
+                        </>
+                      )}
+                      <button>
+                        <Link
+                          href={`/events/detailEvent?id=${event.id}`}
+                          className='btn btn-primary btn-sm'
                         >
-                          <MdEdit />
-                        </button>
-                        <button
-                          className='btn btn-error btn-outline btn-sm'
-                          onClick={() => handleDelete(event._id)}
-                        >
-                          <MdDelete />
-                        </button>
-                      </td>
-                    )}
+                          Detail
+                        </Link>
+                      </button>
+                    </td>
                   </tr>
                 )
               })}
