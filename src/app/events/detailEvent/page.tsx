@@ -131,12 +131,12 @@ export default function EventDetailPage() {
     }
   }, [id])
 
-  // Fetch members when `memberEvent` changes
+  // Fetch members when event is loaded
   useEffect(() => {
-    if (memberEvent.length > 0) {
+    if (event) {
       fetchMembers()
     }
-  }, [memberEvent])
+  }, [event])
 
   // Render loading state
   if (loadingMemberEvent) {
