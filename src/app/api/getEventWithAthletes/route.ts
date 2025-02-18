@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const collection = db.collection('event_with_athlests')
 
     // ทำการ aggregate เพื่อตรวจสอบว่า event นี้มีอยู่แล้วหรือไม่
-    const event_with_athlests = await collection
+    let event_with_athlests = await collection
       .aggregate([
         {
           $match: { id_event: id },
@@ -46,6 +46,28 @@ export async function GET(req: NextRequest) {
 
       // ส่งค่ากลับพร้อมกับข้อมูล event ที่ไม่มี athlete
       return NextResponse.json([{ id_event: id, athletes: [], event: [] }])
+    }
+
+    // check if event has athletes athletes_result
+    if (event_with_athlests[0].athletes_result) {
+      // and sort by point
+      event_with_athlests = event_with_athlests.map((event) => {
+        const athletes_result = event.athletes.map((athlete) => {
+          const result = event.athletes_result.find(
+            (result) => result.id === athlete.id
+          )
+          return {
+            ...athlete,
+            score: result?.score || 0,
+            point: result?.point || 0,
+          }
+        })
+
+        return {
+          ...event,
+          athletes: athletes_result,
+        }
+      })
     }
 
     return NextResponse.json(event_with_athlests)

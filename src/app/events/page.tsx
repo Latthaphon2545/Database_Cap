@@ -53,42 +53,42 @@ export default function Page() {
     }
   }
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoadingUpdate(true)
-    try {
-      console.log(date, id)
-      const res = await axios.post('/api/updateEvent', {
-        _id,
-        date,
-        id,
-        gender,
-        name,
-        classification,
-        time,
-        stage,
-        status,
-        remark,
-      })
-      if (res.data.success) {
-        Swal.fire({
-          title: 'Event updated successfully',
-          icon: 'success',
-        })
-        fetchEvent()
-      }
-    } catch (e) {
-      console.error('Error updating document:', e)
-      Swal.fire({
-        title: 'Error updating event',
-        text: 'Internal Server Error',
-        icon: 'error',
-      })
-    } finally {
-      setLoadingUpdate(false)
-      document.getElementById('edit_event').close()
-    }
-  }
+  // const handleUpdate = async (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   setLoadingUpdate(true)
+  //   try {
+  //     console.log(date, id)
+  //     const res = await axios.post('/api/updateEvent', {
+  //       _id,
+  //       date,
+  //       id,
+  //       gender,
+  //       name,
+  //       classification,
+  //       time,
+  //       stage,
+  //       status,
+  //       remark,
+  //     })
+  //     if (res.data.success) {
+  //       Swal.fire({
+  //         title: 'Event updated successfully',
+  //         icon: 'success',
+  //       })
+  //       fetchEvent()
+  //     }
+  //   } catch (e) {
+  //     console.error('Error updating document:', e)
+  //     Swal.fire({
+  //       title: 'Error updating event',
+  //       text: 'Internal Server Error',
+  //       icon: 'error',
+  //     })
+  //   } finally {
+  //     setLoadingUpdate(false)
+  //     document.getElementById('edit_event').close()
+  //   }
+  // }
 
   const handleDelete = async (id) => {
     await Swal.fire({
@@ -189,7 +189,7 @@ export default function Page() {
         {loading ? (
           <span className='loading loading-dots loading-lg'></span>
         ) : events.length === 0 ? (
-          <p>No members found.</p> // Handle empty data
+          <p>No members found.</p>
         ) : (
           <table className='table'>
             <thead>
@@ -238,50 +238,12 @@ export default function Page() {
                     <td className='text-center'>{event.remark || '-'}</td>
                     <td className='text-center flex justify-center content-center gap-2'>
                       {auth && (
-                        <>
-                          <button
-                            className='btn btn-primary btn-sm'
-                            onClick={() => {
-                              document.getElementById('edit_event').showModal()
-                              set_id(event._id)
-
-                              setDate(
-                                (event.date &&
-                                  new Date(event.date)
-                                    .toISOString()
-                                    .split('T')[0]) ||
-                                  ''
-                              ) // YYYY-MM-DD format
-                              setTime(
-                                (event.date &&
-                                  new Date(event.date).toLocaleTimeString(
-                                    'th-TH',
-                                    {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                      hour12: false,
-                                    }
-                                  )) ||
-                                  ''
-                              )
-                              setID(event.id || '')
-                              setName(event.name || '')
-                              setGender(event.gender || '')
-                              setClassification(event.classification || '')
-                              setStage(event.stage || '')
-                              setStatus(event.status || '')
-                              setRemark(event.remark || '')
-                            }}
-                          >
-                            <MdEdit />
-                          </button>
-                          <button
-                            className='btn btn-error btn-outline btn-sm'
-                            onClick={() => handleDelete(event._id)}
-                          >
-                            <MdDelete />
-                          </button>
-                        </>
+                        <button
+                          className='btn btn-error btn-outline btn-sm'
+                          onClick={() => handleDelete(event._id)}
+                        >
+                          <MdDelete />
+                        </button>
                       )}
                       <button>
                         <Link
@@ -299,29 +261,6 @@ export default function Page() {
           </table>
         )}
       </div>
-
-      <ModalUpdateEvent
-        date={date}
-        time={time}
-        id={id}
-        name={name}
-        gender={gender}
-        classification={classification}
-        stage={stage}
-        status={status}
-        remark={remark}
-        setDate={setDate}
-        setTime={setTime}
-        setID={setID}
-        setName={setName}
-        setGender={setGender}
-        setClassification={setClassification}
-        setStage={setStage}
-        setStatus={setStatus}
-        setRemark={setRemark}
-        handleUpdate={handleUpdate}
-        loadingUpdate={loadingUpdate}
-      />
     </div>
   )
 }
