@@ -133,13 +133,93 @@ export default function EventDetailPage() {
       showLoaderOnConfirm: true,
       preConfirm: async () => {
         try {
-          await axios.post('/api/deleteAthleteFromEvent', {
+          const res = await axios.post('/api/deleteAthleteFromEvent', {
             id_event: event?.id,
             athlete_id: athleteId,
           })
+
           await fetchEventWithAthletes() // Refresh event data
         } catch (err) {
           console.error('Error deleting athlete:', err)
+        }
+      },
+    })
+  }
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoadingUpdate(true)
+    try {
+      console.log(date, id)
+      const res = await axios.post('/api/updateEvent', {
+        _id,
+        date,
+        id,
+        gender,
+        name,
+        classification,
+        time,
+        stage,
+        status,
+        remark,
+      })
+      if (res.data.success) {
+        Swal.fire({
+          title: 'Event updated successfully',
+          icon: 'success',
+        })
+        fetchEventWithAthletes()
+      }
+    } catch (e) {
+      console.error('Error updating document:', e)
+      Swal.fire({
+        title: 'Error updating event',
+        text: 'Internal Server Error',
+        icon: 'error',
+      })
+    } finally {
+      setLoadingUpdate(false)
+      document.getElementById('edit_event').close()
+    }
+  }
+
+  const handleAddResult = async () => {
+    await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to save the result?',
+      icon: 'warning',
+      showCancelButton: true,
+      reverseButtons: true,
+      confirmButtonText: 'Yes, save it',
+      cancelButtonText: 'No, cancel',
+      loaderHtml: '<span class="loading loading-lg"></span>',
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        try {
+          const res = await axios.post('/api/addResultToEvent', {
+            id_event: event?.id,
+            athletes_result: Object.entries(athleteScores).map(
+              ([id, { score, point }]) => ({
+                id: parseInt(id),
+                score,
+                point,
+              })
+            ),
+          })
+          if (res.data.success) {
+            Swal.fire({
+              title: 'Result saved successfully',
+              icon: 'success',
+            })
+            fetchEventWithAthletes()
+          }
+        } catch (e) {
+          console.error('Error adding result:', e)
+          Swal.fire({
+            title: 'Error saving result',
+            text: 'Internal Server Error',
+            icon: 'error',
+          })
         }
       },
     })
@@ -185,43 +265,6 @@ export default function EventDetailPage() {
   // Render loading state
   if (loadingMemberEvent) {
     return <span className='loading loading-dots loading-lg'></span>
-  }
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoadingUpdate(true)
-    try {
-      console.log(date, id)
-      const res = await axios.post('/api/updateEvent', {
-        _id,
-        date,
-        id,
-        gender,
-        name,
-        classification,
-        time,
-        stage,
-        status,
-        remark,
-      })
-      if (res.data.success) {
-        Swal.fire({
-          title: 'Event updated successfully',
-          icon: 'success',
-        })
-        fetchEventWithAthletes()
-      }
-    } catch (e) {
-      console.error('Error updating document:', e)
-      Swal.fire({
-        title: 'Error updating event',
-        text: 'Internal Server Error',
-        icon: 'error',
-      })
-    } finally {
-      setLoadingUpdate(false)
-      document.getElementById('edit_event').close()
-    }
   }
 
   // Render event details
@@ -287,35 +330,6 @@ export default function EventDetailPage() {
     )
   }
 
-  const handleAddResult = async () => {
-    try {
-      const res = await axios.post('/api/addResultToEvent', {
-        id_event: event?.id,
-        athletes_result: Object.entries(athleteScores).map(
-          ([id, { score, point }]) => ({
-            id: parseInt(id),
-            score,
-            point,
-          })
-        ),
-      })
-      if (res.data.success) {
-        Swal.fire({
-          title: 'Result saved successfully',
-          icon: 'success',
-        })
-        fetchEventWithAthletes()
-      }
-    } catch (e) {
-      console.error('Error adding result:', e)
-      Swal.fire({
-        title: 'Error saving result',
-        text: 'Internal Server Error',
-        icon: 'error',
-      })
-    }
-  }
-
   // Render athletes in the event
   const renderAthletesInEvent = () => {
     if (loadingMemberEvent) {
@@ -368,9 +382,9 @@ export default function EventDetailPage() {
                               ? '#C0C0C0'
                               : '#cd7f32'
                           }
-                          fill-rule='evenodd'
+                          fillRule='evenodd'
                           d='M14.648 1.308a.75.75 0 0 0-.98.404l-1.04 2.5a.75.75 0 0 0 1.384.576l1.04-2.5a.75.75 0 0 0-.404-.98m3.655.006a.75.75 0 0 0-.99.383l-3.449 7.814a7 7 0 0 0-.6-.143L9.51 1.671a.75.75 0 0 0-1.348.658l3.384 6.936a6.7 6.7 0 0 0-1.875.398l-4-7.998a.75.75 0 1 0-1.341.67l4 8a6.75 6.75 0 1 0 6.922-.252l3.435-7.78a.75.75 0 0 0-.383-.989'
-                          clip-rule='evenodd'
+                          clipRule='evenodd'
                         />
                       </svg>
                       {rank}
@@ -544,7 +558,11 @@ export default function EventDetailPage() {
                 className='btn btn-primary btn-sm btn-outline mt-5'
                 onClick={handleAddResult}
               >
-                Save Result
+                {loadingUpdate ? (
+                  <span className='loading loading-dots loading-sm'></span>
+                ) : (
+                  'Save Result'
+                )}
               </button>
               <button
                 className='btn btn-primary btn-sm btn-outline'

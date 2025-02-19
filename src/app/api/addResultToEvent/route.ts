@@ -23,21 +23,24 @@ export async function POST(req) {
 
     // นำผลการแข่งขันที่มีอยู่แล้วมารวมกับผลการแข่งขันใหม่
     const existingResults = event.athletes_result || []
-    const updatedResults = [...existingResults] // Clone existing results
 
-    athletes_result.forEach((newResult) => {
-      const index = updatedResults.findIndex(
-        (existing) => existing.id_member === newResult.id_member
-      )
+    // รวมผลการแข่งขันเก่าและใหม่
+    const updatedResults = [
+      ...existingResults.map((oldResult) => {
+        // หา athlete ใหม่ที่มี id เดียวกับของเก่า
+        const newResult = athletes_result.find(
+          (newAthlete) => newAthlete.id === oldResult.id
+        )
 
-      if (index !== -1) {
-        // อัปเดตผลการแข่งขันถ้า id_member ตรงกัน
-        updatedResults[index] = { ...updatedResults[index], ...newResult }
-      } else {
-        // เพิ่มผลการแข่งขันใหม่ถ้า id_member ยังไม่มีในระบบ
-        updatedResults.push(newResult)
-      }
-    })
+        // ถ้าพบ athlete ใหม่ อัปเดตค่า
+        return newResult ? { ...oldResult, ...newResult } : oldResult
+      }),
+      // เพิ่มรายการใหม่ที่ยังไม่มีใน existingResults
+      ...athletes_result.filter(
+        (newAthlete) =>
+          !existingResults.some((oldResult) => oldResult.id === newAthlete.id)
+      ),
+    ]
 
     // อัปเดตผลการแข่งขันในฐานข้อมูล
     await collection.updateOne(

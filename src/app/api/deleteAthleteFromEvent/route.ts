@@ -14,7 +14,12 @@ export async function POST(req) {
 
     await collection.updateOne(
       { id_event },
-      { $pull: { athlete_ids: athlete_id } }
+      {
+        $pull: {
+          athlete_ids: athlete_id,
+          athletes_result: { id: athlete_id }, // เพิ่มการลบ result
+        },
+      }
     )
 
     return NextResponse.json({ success: true }, { status: 200 })
